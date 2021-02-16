@@ -1,0 +1,49 @@
+global serverURL
+global serverAPIKey
+global serverName
+
+on initConfigurations url, apiKey, serverName
+	put url into global serverURL
+	put apiKey into globl serverAPIKey
+	put serverName into global serverName
+end initConfigurations
+
+on runAllocation poolName, allocationTypes
+	// Create allocation job
+	set allocationJSON to JSONFormat(allocationTypes)
+	
+	set allocURL to global serverURL & "/api/apikey/" & global serverAPIKey & "/allocation-pool/" & poolName & "/resolve/server/" & global serverName & "/execute"
+	
+	post allocationJSON to url allocURL with headers {"Content-Type": "application/json"}
+	put it into curllocationJobRaw
+	set curAllocationJob to JSONValue(curllocationJobRaw)
+	log "Created job with ID:" & curAllocationJob.id
+	
+	// Wait for job to complete
+	set jobTrackingURL to global serverURL & "/api/apikey/" & global serverAPIKey & "/job/" & curAllocationJob.id
+	repeat while curAllocationJob.jobState is not "Complete" and curAllocationJob.jobState is not "Error"
+		put url jobTrackingURL into curllocationJobRaw
+		
+		set curAllocationJob to JSONValue(curllocationJobRaw)
+		
+		log "Job state " && curAllocationJob.jobState
+		
+		wait 1
+	end repeat 
+end runAllocation
+
+on retrieveAllocationResult curPool, curSuite, curTest
+	set mergeMethod to "NoMerge"
+	
+	set dataLookup to {"pool": curPool, "suite": curSuite, "testName": curTest}
+	
+	set lookupURL to global serverURL & "/api/apikey/" & global serverAPIKey & "/allocation-pool/suite/allocated-test/result/value?mergeMethod=" & mergeMethod
+	
+	post JSONFormat(dataLookup) to url lookupURL with headers {"Content-Type": "application/json"}
+	put it into allocationResultRaw
+	
+	set allocResult to JSONValue(allocationResultRaw)
+	
+	return allocResult 
+end retrieveAllocationResult
+	

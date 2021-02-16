@@ -1,0 +1,17 @@
+// 1) Initial configuration
+CuriosityAllocationHandler.initConfigurations "http://localhost", "APIKey", "ServerName"
+
+// 2) Perform allocations
+set poolName to "Eggplant"
+set allocationTypes to [{"poolName": poolName, "suiteName": "FindAmericanUsers", "allocationTestName": "Find american users"}]
+
+CuriosityAllocationHandler.runAllocation poolName, allocationTypes
+
+// 3) Retrieve results 
+CuriosityAllocationHandler.retrieveAllocationResult poolName, "FindAmericanUsers", "Find american users"
+set americanUsers to the result
+
+// 4) Do something with the data - here we will print to the terminal
+log americanUsers 
+set firstRow to item 1 of americanUsers.dataRows
+log "Password result: " & firstRow.Username 
