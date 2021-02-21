@@ -54,4 +54,29 @@ log "Password result: " & firstRow.Username
 Within the test case you can retrieve the results using the 'CuriosityAllocationHandler.retrieveAllocationResult’ function. Here you can specify the pool, suite name, and test name to retrieve the results for. Again, this must match the specifications given in the associated allocation pool within the portal. The return result contains the functions to retrieve results by the column names, and column indexes as specified in the initial test criteria.
 
 ## Job Execution
+When executing a VIP job through the Test Modeller portal there is the option to "Download Executor". This downloads a ZIP folder containing:
+1. config.xml - This has the parameters and value pairs for each value that can be input into the selected process.
+2. run.bat - A batch file for running the task.
+3. TestModeller.jar - A java executable JAR which wraps around the TestModeller API to execute the selected task.
 
+![Download Executor](https://curiositysoftware.ie/Resources/downloadExecutor.gif)
+
+The job can be executed via the command line by running the selected bat file. Any values can be directly edited within the config.xml. The batch file can be wrapped into Eggplant code as below.
+```
+// Run a job using the Test Modeller JAR executor
+shell("c:\vip\runJob.bat")
+
+put "c:\vip\resultFile.zip" into resultFile
+repeat until there is a file resultFile
+	wait 1
+end repeat
+
+log "Job Processed"
+```
+
+Any values can be overriden at runtime by passing the arguments as a JSON message into the batch file. For example:
+```
+java -jar TestModeller.jar config.xml output.zip "{\"parProfileId\":\"OverridingProfileId\"}"
+```
+
+Note: The java location may need to be directly hard coded if it is not available in the systems environment PATH.
