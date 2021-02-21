@@ -1,0 +1,9 @@
+// Run a job using the Test Modeller JAR executor
+shell("c:\vip\runJob.bat")
+
+put "c:\vip\resultFile.zip" into resultFile
+repeat until there is a file resultFile
+	wait 1
+end repeat
+
+log "Job Processed"

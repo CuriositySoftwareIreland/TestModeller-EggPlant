@@ -1,5 +1,5 @@
-// 1) Initial configuration
-CuriosityAllocationHandler.initConfigurations "http://localhost", "APIKey", "ServerName"
+// 1) Initial configuration - Replace APIUrl, APIKey, ServerName
+CuriosityAllocationHandler.initConfigurations "APIUrl", "APIKey", "ServerName"
 
 // 2) Perform allocations
 set poolName to "Eggplant"
